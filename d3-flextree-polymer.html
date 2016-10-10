@@ -28,6 +28,11 @@
   .fit {
     @apply(--layout-fit);
   }
+  path.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+  }
   svg {
     border-radius: 25px;
     background-color: var(--d3-flextree-background-color, #ddd);
@@ -255,6 +260,7 @@
               style: filler,
             })
             .on('click', function(d) {
+              d3Polymer.selected = d;
               toggle(d);
               d3Polymer._update(d);
             })
