@@ -286,7 +286,24 @@
             .data(links)
           .enter().append("path")
             .attr("class", "link")
-            .attr("d", diagonal);
+            .attr("d", function(d) {
+                var p = diagonal(d);
+                var src = d.source,
+                node = d3.select('#n-' + (src.id))[0][0],
+                dia,
+                width = 0 ;
+                
+                if(node) {
+                width = node.getBBox().width;
+                }
+                
+                dia = 'M' + svg_x(src.y + src.y_size - nodebox_right_margin/scale) + ',' + svg_y(src.x) +
+                'H' + svg_x(d.target.y) + 'V' + svg_y(d.target.x) +
+                //+ (d.target.children ? '' : 'h' + 30);
+                'h';
+                
+                return dia; 
+            });
 
 	d3TreeSVG.call(d3.behavior.zoom()
                               .scaleExtent([0.5, 5])
