@@ -287,20 +287,13 @@
           .enter().append("path")
             .attr("class", "link")
             .attr("d", function(d) {
-                var p = diagonal(d);
-                var src = d.source,
-                node = d3.select('#n-' + (src.id))[0][0],
-                dia,
-                width = 0 ;
+                var x1 = svg_x(d.source.y + d.source.y_size - nodebox_right_margin/scale),
+                y1 = svg_y(d.source.x),
+                x2 = svg_x(d.target.y),
+                y2 = svg_y(d.target.x),
+                dia;
                 
-                if(node) {
-                width = node.getBBox().width;
-                }
-                
-                dia = 'M' + svg_x(src.y + src.y_size - nodebox_right_margin/scale) + ',' + svg_y(src.x) +
-                'H' + svg_x(d.target.y) + 'V' + svg_y(d.target.x) +
-                //+ (d.target.children ? '' : 'h' + 30);
-                'h';
+                dia = 'M' + x1 + ',' + y1 + 'H' + ((x1 + x2) / 2) + 'V' + y2 + 'h' + ((x2 - x1) / 2);
                 
                 return dia; 
             });
