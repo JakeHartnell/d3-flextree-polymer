@@ -103,7 +103,8 @@
 		}
         },
         selected: {
-          type: Object
+          type: Object,
+          notify: true
         }
       },
 
@@ -223,7 +224,7 @@
         // The node box is drawn smaller than the actual node width, to
         // allow room for the diagonal. Note that these are in units of
         // svg drawing coordinates (not tree node coordinates)
-        var nodebox_right_margin = Math.min(x_size_min * scale, 10);
+        var nodebox_right_margin = Math.min(x_size_min * scale, 40);
         // And smaller than the actual node height, for spacing
         var nodebox_vertical_margin = Math.min(y_size_min * scale, 3);
 
@@ -265,7 +266,19 @@
               d3Polymer._update(d);
             })
         ;
-
+        
+        node.append("text")
+        .attr("x", 5)
+        .attr("y", 5)
+        .attr("dy", ".15em")
+        .attr('class', 'nodeText')
+        .attr("text-anchor", function(d) {
+        return "start";
+        })
+        .text(function(d) {
+        return "Hello";
+        });
+        
         // This controls the lines between the nodes; see
         // https://github.com/mbostock/d3/wiki/SVG-Shapes#diagonal_projection
         var diagonal = d3.svg.diagonal()
