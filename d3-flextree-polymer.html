@@ -31,7 +31,7 @@
   path.link {
     fill: none;
     stroke: #ccc;
-    stroke-width: 1.5px;
+    stroke-width: 1.0px;
   }
   svg {
     border-radius: 25px;
@@ -240,9 +240,14 @@
         // Reposition everything according to the layout
         node.attr("transform", function(d) { 
             return "translate(" + svg_x(d.y) + "," + svg_y(d.x) + ")"; 
-          })
-          .append("rect")
-            .attr("data-id", function(d) {
+          });
+          
+          node.html( function(d) { return d._draw ? d._draw : ''; })
+          .filter(function(d) { return (d._draw) ? true : false; });
+          
+          node.append("rect")
+          .filter(function(d) { return (d._draw) ? false : true; })
+          .attr("data-id", function(d) {
               return d.id;
             })
             .attr({
@@ -268,6 +273,7 @@
         ;
         
         node.append("text")
+        .filter(function(d) { return (d._draw) ? false : true; })
         .attr("x", 5)
         .attr("y", 5)
         .attr("dy", ".15em")
