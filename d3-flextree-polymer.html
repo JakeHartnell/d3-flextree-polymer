@@ -39,6 +39,18 @@
     border: 2px solid var(--d3-flextree-border-color, #73AD21);
     padding: 5px; 
   }
+  g.selected rect {
+  stroke: black;
+  stroke-width: 3.0px;
+  }
+  g.selected polygon {
+  stroke: black;
+  stroke-width: 3.0px;
+  }
+  g.selected circle {
+  stroke: black;
+  stroke-width: 3.0px;
+  }
 </style>
 
 <div class="general">
@@ -54,6 +66,7 @@
     var d3TreeSVG_g;
     var d3Polymer;
     var engine;
+    var selected_g = null;
 
     Polymer({
 
@@ -226,9 +239,9 @@
         // The node box is drawn smaller than the actual node width, to
         // allow room for the diagonal. Note that these are in units of
         // svg drawing coordinates (not tree node coordinates)
-        var nodebox_right_margin = Math.min(x_size_min * scale, 40);
+        var nodebox_right_margin = Math.min(x_size_min * scale, 60);
         // And smaller than the actual node height, for spacing
-        var nodebox_vertical_margin = Math.min(y_size_min * scale, 3);
+        var nodebox_vertical_margin = Math.min(y_size_min * scale, 6);
 
 
         function rand() {
@@ -244,8 +257,35 @@
             return "translate(" + svg_x(d.y) + "," + svg_y(d.x) + ")"; 
           });
           
+          var links = engine.links(nodes);
+          var links = d3TreeSVG_g.selectAll(".link")
+                                .data(links)
+                                .enter().append("path")
+                                .attr("class", "link")
+                                .attr("d", function(d) {
+                                var x1 = svg_x(d.source.y + d.source.y_size - nodebox_right_margin/scale),
+                                y1 = svg_y(d.source.x),
+                                x2 = svg_x(d.target.y),
+                                y2 = svg_y(d.target.x),
+                                dia;
+          
+          dia = 'M' + x1 + ',' + y1 + 'H' + ((x1 + x2) / 2) + 'V' + y2 + 'h' + ((x2 - x1) / 2);
+          
+          return dia; 
+          });
+          
           node.html( function(d) { return d._draw ? d._draw : ''; })
-          .filter(function(d) { return (d._draw) ? true : false; });
+          .filter(function(d) { return (d._draw) ? true : false; })
+          .on('click', function(d) {
+          d3Polymer.selected = d;
+          toggle(d);
+          d3Polymer._update(d);
+          if (selected_g) {
+            selected_g.classList.remove("selected");
+          };
+          this.classList.add("selected");
+          selected_g = this;
+          });
           
           node.append("rect")
           .filter(function(d) { return (d._draw) ? false : true; })
@@ -302,22 +342,6 @@
           })
         ;
 
-        var links = engine.links(nodes);
-        var links = d3TreeSVG_g.selectAll(".link")
-            .data(links)
-          .enter().append("path")
-            .attr("class", "link")
-            .attr("d", function(d) {
-                var x1 = svg_x(d.source.y + d.source.y_size - nodebox_right_margin/scale),
-                y1 = svg_y(d.source.x),
-                x2 = svg_x(d.target.y),
-                y2 = svg_y(d.target.x),
-                dia;
-                
-                dia = 'M' + x1 + ',' + y1 + 'H' + ((x1 + x2) / 2) + 'V' + y2 + 'h' + ((x2 - x1) / 2);
-                
-                return dia; 
-            });
 
 	d3TreeSVG.call(d3.behavior.zoom()
                               .scaleExtent([0.5, 5])
